@@ -18,11 +18,13 @@ import { ApiService } from '../../services/api.service';
     providers: [ApiService]
 })
 export class FormularioComponent implements OnInit {
+    @Output() resetMapa = new EventEmitter<void>();
     @Output() viagemSelecionada = new EventEmitter<any>(); // Evento para enviar a viagem selecionada
     linhas: any[] = [];
     viagensFiltradas: any[] = [];
     selectedLinha: number | null = null;
     selectedViagem: number | null = null;
+    rotaBuscada = false;
 
     constructor(private apiService: ApiService) { }
 
@@ -62,10 +64,18 @@ export class FormularioComponent implements OnInit {
     buscarViagem(): void {
         const viagem = this.viagensFiltradas.find((v) => v.id === Number(this.selectedViagem));
         if (viagem) {
+            this.rotaBuscada = true; 
             this.viagemSelecionada.emit(viagem); // Envia a viagem selecionada
         } else {
             console.error('Viagem não encontrada!');
         }
     }
-    
+    limparFormulario(): void {
+        this.rotaBuscada = false; 
+        this.selectedLinha = null;
+        this.selectedViagem = null; 
+        this.viagensFiltradas = [];
+
+        this.resetMapa.emit(); 
+    }
 }

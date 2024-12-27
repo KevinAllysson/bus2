@@ -6,7 +6,7 @@
     <ng-template #loggedInContent>
         <div class="content-container">
             <div class="map-container">
-                <app-mapa [showForm]="showForm" [paradas]="listaDeParadas" [viagem]="viagem"></app-mapa>
+                <app-mapa #mapa [showForm]="showForm" [paradas]="listaDeParadas" [viagem]="viagem"></app-mapa>
             </div>
             <div class="form-container">
                 <button (click)="toggleForm()" class="toggle-form-button">
@@ -18,7 +18,7 @@
                     <div class="separete-line">
                         <div class="line-center"></div>
                     </div>
-                    <app-formulario (viagemSelecionada)="viagem = $event"></app-formulario>
+                    <app-formulario (viagemSelecionada)="viagem = $event" (resetMapa)="onResetMapa()" ></app-formulario>
                 </div>
 
                 <div *ngIf="!showForm">

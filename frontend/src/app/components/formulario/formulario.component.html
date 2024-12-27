@@ -14,5 +14,8 @@
             </option>
         </select>
     </div>
-    <button class="btn-search" (click)="buscarViagem()">Buscar Viagem</button>
+    <div class="form-buttons">
+        <button class="btn-search" (click)="buscarViagem()">Buscar Viagem</button>
+        <button class="btn-clear btn-search" *ngIf="rotaBuscada" (click)="limparFormulario()">Limpar</button>
+    </div>
 </div>

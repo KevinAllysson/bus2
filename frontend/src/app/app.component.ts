@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild  } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -19,6 +19,8 @@ import { LoginComponent } from './components/login/login.component';
   imports: [RouterModule, FormularioComponent, CommonModule, MapaComponent, FontAwesomeModule, IconsViewComponent, LoginComponent],
 })
 export class AppComponent implements OnInit {
+  @ViewChild('mapa') mapaComponent!: MapaComponent; 
+
   title = 'BusFinder';
   isLoggedIn = false;
   showForm = true;
@@ -40,6 +42,11 @@ export class AppComponent implements OnInit {
 
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
+    }
+  }
+  onResetMapa(): void {
+    if (this.mapaComponent) {
+      this.mapaComponent.resetMapa();
     }
   }
 

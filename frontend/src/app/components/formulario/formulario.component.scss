@@ -32,10 +32,22 @@
     border: none;
     cursor: pointer;
 }
+.btn-clear{
+    background-color: #ff6464 ;
+}
 .btn-search:hover {
     background-color: #2ace7f;
 }
-.btn-search:active {
+.btn-clear:hover {
+    background-color: #cc3a3a;
+}
+.btn-search:active, .btn-search:active {
     position: relative;
     top: 1px;
+}
+.form-buttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

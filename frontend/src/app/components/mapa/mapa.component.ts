@@ -18,7 +18,7 @@ import { ParadasService } from '../../services/paradas.service';
     ],
 })
 export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
-    constructor(private paradasService: ParadasService) {}
+    constructor(private paradasService: ParadasService) { }
 
     @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap; // Referência ao GoogleMap do Angular
     @Input() viagem!: any;
@@ -39,14 +39,26 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
         mapTypeId: 'roadmap',
     };
 
-    polyline!: google.maps.Polyline;
+    polyline: google.maps.Polyline | null = null;
     markers: google.maps.Marker[] = []; // Lista de marcadores
+
+
+    resetMapa(): void {
+        if (this.googleMap?.googleMap) {
+            this.googleMap.googleMap.setCenter(this.center); 
+            this.googleMap.googleMap.setZoom(this.zoom);
+            if (this.polyline) {
+                this.polyline.setMap(null);
+                this.polyline = null; // Reseta a referência para evitar reutilização
+            }
+        }
+    }
 
     ngOnInit(): void {
         this.paradasService.getParadas().subscribe((paradas) => {
-            this.addMarkers(paradas); 
+            this.addMarkers(paradas);
         });
-    
+
         console.log('MapaComponent inicializado. Centro padrão configurado:', this.center);
     }
 
@@ -65,7 +77,7 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
         if (changes['showForm']) {
             this.updateMapDimensions();
         }
-    
+
         // Renderiza rota e paradas da viagem selecionada
         if (changes['viagem'] && this.viagem) {
             if (Array.isArray(this.viagem.caminho)) {
@@ -76,14 +88,14 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                 console.error('Caminho da viagem está em formato inválido.', this.viagem.caminho);
             }
         }
-    
+
         // Adiciona marcadores das paradas
         if (changes['paradas'] && changes['paradas'].currentValue) {
             const paradas = changes['paradas'].currentValue;
             this.addMarkers(paradas);
         }
     }
-    
+
 
     private updateMapDimensions(): void {
         this.mapWidth = this.showForm ? '75vw' : '95vw';
@@ -171,18 +183,18 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
             console.error('Google Map não está inicializado. Não é possível adicionar marcadores.');
             return;
         }
-    
+
         // Limpa marcadores existentes
         this.markers.forEach((marker) => marker.setMap(null));
         this.markers = [];
-    
+
         // Adiciona novos marcadores com validação
         paradas.forEach((parada) => {
             if (typeof parada.lat !== 'number' || typeof parada.lng !== 'number') {
                 console.warn(`Parada inválida ignorada:`, parada);
                 return; // Ignora entradas inválidas
             }
-    
+
             const marker = new google.maps.Marker({
                 position: { lat: parada.lat, lng: parada.lng },
                 title: parada.nome,
@@ -191,7 +203,7 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                     scaledSize: new google.maps.Size(32, 32),
                 },
             });
-    
+
             // Adiciona evento de clique no marcador
             marker.addListener('click', () => {
                 const infoWindow = new google.maps.InfoWindow({
@@ -199,7 +211,7 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                 });
                 infoWindow.open(googleMapInstance, marker);
             });
-    
+
             marker.setMap(googleMapInstance);
             this.markers.push(marker);
         });
