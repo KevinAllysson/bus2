@@ -1,0 +1,26 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root', // Disponível globalmente como um provider
+})
+export class ParadasService {
+  private readonly apiUrl = 'http://localhost:3000/paradas';
+
+  constructor(private http: HttpClient) {}
+
+  getParadas(): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
+    return this.http.get<{ id: number; nome: string; lat: number; lng: number }[]>(this.apiUrl).pipe(
+        map((paradas) =>
+            paradas.filter((parada) => {
+                const isValid = typeof parada.lat === 'number' && typeof parada.lng === 'number';
+                if (!isValid) {
+                    console.warn(`Parada inválida encontrada e ignorada:`, parada);
+                }
+                return isValid;
+            })
+        )
+    );
+}
+}

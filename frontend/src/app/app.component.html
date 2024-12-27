@@ -6,7 +6,7 @@
     <ng-template #loggedInContent>
         <div class="content-container">
             <div class="map-container">
-                <app-mapa [showForm]="showForm" [viagem]="viagem"></app-mapa>
+                <app-mapa [showForm]="showForm" [paradas]="listaDeParadas" [viagem]="viagem"></app-mapa>
             </div>
             <div class="form-container">
                 <button (click)="toggleForm()" class="toggle-form-button">

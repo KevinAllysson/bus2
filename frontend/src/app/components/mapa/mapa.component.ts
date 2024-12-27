@@ -3,6 +3,7 @@ import { GoogleMap } from '@angular/google-maps';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Importar FontAwesomeModule
 import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { ParadasService } from '../../services/paradas.service';
 
 
 @Component({
@@ -17,9 +18,12 @@ import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
     ],
 })
 export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
+    constructor(private paradasService: ParadasService) {}
+
     @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap; // Referência ao GoogleMap do Angular
     @Input() viagem!: any;
     @Input() showForm: boolean = true;
+    @Input() paradas: { lat: number; lng: number; nome: string }[] = [];
 
     // Ícones FontAwesome
     faAngleRight = faAngleRight;
@@ -39,6 +43,10 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
     markers: google.maps.Marker[] = []; // Lista de marcadores
 
     ngOnInit(): void {
+        this.paradasService.getParadas().subscribe((paradas) => {
+            this.addMarkers(paradas); 
+        });
+    
         console.log('MapaComponent inicializado. Centro padrão configurado:', this.center);
     }
 
@@ -53,10 +61,12 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        // Atualiza dimensões do mapa ao alterar showForm
         if (changes['showForm']) {
             this.updateMapDimensions();
         }
-
+    
+        // Renderiza rota e paradas da viagem selecionada
         if (changes['viagem'] && this.viagem) {
             if (Array.isArray(this.viagem.caminho)) {
                 this.renderRouteFromArray(this.viagem.caminho, this.viagem.paradas || []);
@@ -66,7 +76,14 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                 console.error('Caminho da viagem está em formato inválido.', this.viagem.caminho);
             }
         }
+    
+        // Adiciona marcadores das paradas
+        if (changes['paradas'] && changes['paradas'].currentValue) {
+            const paradas = changes['paradas'].currentValue;
+            this.addMarkers(paradas);
+        }
     }
+    
 
     private updateMapDimensions(): void {
         this.mapWidth = this.showForm ? '75vw' : '95vw';
@@ -148,25 +165,41 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
         this.addMarkers(paradas);
     }
 
-    private addMarkers(paradas: any[]): void {
+    private addMarkers(paradas: { nome: string; lat: number; lng: number }[]): void {
         const googleMapInstance = this.googleMap.googleMap;
         if (!googleMapInstance) {
             console.error('Google Map não está inicializado. Não é possível adicionar marcadores.');
             return;
         }
-
+    
+        // Limpa marcadores existentes
         this.markers.forEach((marker) => marker.setMap(null));
         this.markers = [];
-
+    
+        // Adiciona novos marcadores com validação
         paradas.forEach((parada) => {
+            if (typeof parada.lat !== 'number' || typeof parada.lng !== 'number') {
+                console.warn(`Parada inválida ignorada:`, parada);
+                return; // Ignora entradas inválidas
+            }
+    
             const marker = new google.maps.Marker({
                 position: { lat: parada.lat, lng: parada.lng },
                 title: parada.nome,
                 icon: {
-                    url: 'assets/icons/bus-stop.png',
+                    url: '../../img/bus-stop.png', // Ícone personalizado
                     scaledSize: new google.maps.Size(32, 32),
                 },
             });
+    
+            // Adiciona evento de clique no marcador
+            marker.addListener('click', () => {
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div><strong>${parada.nome}</strong></div>`,
+                });
+                infoWindow.open(googleMapInstance, marker);
+            });
+    
             marker.setMap(googleMapInstance);
             this.markers.push(marker);
         });

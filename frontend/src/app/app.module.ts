@@ -9,13 +9,14 @@ import { FormularioComponent } from './components/formulario/formulario.componen
 import { IconsViewComponent } from './components/icons-view/icons-view.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapaComponent,
-    FormularioComponent, // Declare o FormularioComponent
-    IconsViewComponent, // Declare o IconsViewComponent
+    FormularioComponent,
+    IconsViewComponent, 
   ],
   imports: [
     BrowserModule,
@@ -24,6 +25,7 @@ import { CommonModule } from '@angular/common';
     FontAwesomeModule,
     FormsModule,
     CommonModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

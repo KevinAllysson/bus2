@@ -5,5 +5,6 @@ import { AppComponent } from './app.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'mapa', component: AppComponent }, // A rota /mapa agora carrega o AppComponent
+  { path: 'mapa', component: AppComponent },
+  { path: '**', redirectTo: 'login' },
 ];

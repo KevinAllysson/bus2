@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   viagem: any = null;
   faAngleLeft = faAngleLeft;
   faAngleRight = faAngleRight;
+  listaDeParadas: any = null;
 
   constructor(private titleService: Title, private router: Router) {}
 

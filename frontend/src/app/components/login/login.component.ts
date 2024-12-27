@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
     @Output() loginSuccess = new EventEmitter<void>();
 
-    username = '';
-    password = '';
+    username = 'admin';
+    password = '12345';
     errorMessage = '';
 
     onSubmit(): void {

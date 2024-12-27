@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinhasModule } from './linhas/linhas.module';
 import { Viagem } from './viagens/viagens.entity';
 import { Linha } from './linhas/linhas.entity';
+import { ParadasModule } from './paradas/paradas.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { Linha } from './linhas/linhas.entity';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Use apenas em desenvolvimento!
     }),
-    LinhasModule, // Importa o módulo de Linhas
+    LinhasModule,
+    ParadasModule,
   ],
 })
 export class AppModule {}
