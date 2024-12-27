@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 
+
 @Component({
     selector: 'app-formulario',
     standalone: true,

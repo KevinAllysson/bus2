@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
-import { MapaComponent } from './components/mapa/mapa.component';
+import { LoginComponent } from './components/login/login.component';
+import { AppComponent } from './app.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/mapa', pathMatch: 'full' }, // Redireciona para /mapa
-  { path: 'mapa', component: MapaComponent } // Define a rota para o MapaComponent
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'mapa', component: AppComponent }, // A rota /mapa agora carrega o AppComponent
 ];

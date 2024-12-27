@@ -1,23 +1,30 @@
-<main class="app-main ">
-    <div class="content-container">
-        <div class="map-container">
-            <app-mapa [showForm]="showForm" [viagem]="viagem"></app-mapa>
-        </div>
-        <div class="form-container" >
-            <button (click)="toggleForm()" class="toggle-form-button">
-                <div class="logo-img"></div>
-            </button>
+<main class="app-main">
+    <ng-container *ngIf="!isLoggedIn; else loggedInContent">
+        <app-login (loginSuccess)="onLoginSuccess()"></app-login>
+    </ng-container>
 
-            <div *ngIf="showForm" class="form-content">
-                <span class="title">BusFinder</span>
-                <div class="separete-line">
-                    <div class="line-center"></div>
-                </div>
-                <app-formulario (viagemSelecionada)="viagem = $event"></app-formulario>
+    <ng-template #loggedInContent>
+        <div class="content-container">
+            <div class="map-container">
+                <app-mapa [showForm]="showForm" [viagem]="viagem"></app-mapa>
             </div>
-            <div *ngIf="!showForm">
-                <app-icons-view></app-icons-view>
+            <div class="form-container">
+                <button (click)="toggleForm()" class="toggle-form-button">
+                    <div class="logo-img"></div>
+                </button>
+
+                <div *ngIf="showForm" class="form-content">
+                    <span class="title">BusFinder</span>
+                    <div class="separete-line">
+                        <div class="line-center"></div>
+                    </div>
+                    <app-formulario (viagemSelecionada)="viagem = $event"></app-formulario>
+                </div>
+
+                <div *ngIf="!showForm">
+                    <app-icons-view></app-icons-view>
+                </div>
             </div>
         </div>
-    </div>
+    </ng-template>
 </main>

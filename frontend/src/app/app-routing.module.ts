@@ -1,10 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { MapaComponent } from './components/mapa/mapa.component';
-
-const routes: Routes = [
-  { path: '', component: MapaComponent } 
-];
+import { RouterModule } from '@angular/router';
+import { routes } from './app.routes'; // Importa as rotas do app.routes.ts
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
