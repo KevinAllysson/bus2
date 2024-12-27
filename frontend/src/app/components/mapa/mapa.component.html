@@ -1,12 +1,5 @@
-<div class="map-wrapper">
-    <google-map
-      ngIf="center"
-      class="map-container"
-      [center]="center"
-      [zoom]="zoom"
-      height="95vh" 
-      width="95vw" 
-      [options]="options">
-    </google-map>
-  </div>
-  
+<div>
+  <google-map *ngIf="center" class="map-wrapper" [center]="center" [zoom]="zoom" [options]="options" [height]="'95vh'"
+    [width]="mapWidth">
+  </google-map>
+</div>

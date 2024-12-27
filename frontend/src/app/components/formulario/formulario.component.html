@@ -1,0 +1,18 @@
+<div class="form-component">
+    <div class="form-title">Busque por linhas mais adequadas para suas viagens.</div>
+    <div class="form-group">
+        <label for="linha">Selecionar Linha:</label>
+        <select id="linha" [(ngModel)]="selectedLinha" (change)="onLinhaChange()" class="form-control">
+            <option *ngFor="let linha of linhas" [value]="linha.id">{{ linha.nome }}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="viagem">Selecionar Viagem:</label>
+        <select id="viagem" [(ngModel)]="selectedViagem" class="form-control">
+            <option *ngFor="let viagem of viagensFiltradas" [value]="viagem.id">
+                {{ viagem.descricao }}
+            </option>
+        </select>
+    </div>
+    <button class="btn-search" (click)="buscarViagem()">Buscar Viagem</button>
+</div>

@@ -15,10 +15,13 @@ class CoordenadaDto {
 export class CreateViagemDto {
   @IsNotEmpty()
   @IsNumber()
-  linha_id: number; // ID da linha associada
+  linha_id: number;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CoordenadaDto)
-  caminho: CoordenadaDto[]; // Array de coordenadas
+  caminho: CoordenadaDto[];
+
+  @IsNotEmpty()
+  descricao?: string;
 }

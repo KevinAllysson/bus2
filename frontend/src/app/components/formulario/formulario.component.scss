@@ -1,0 +1,41 @@
+.form-component{
+    margin: 15px 0;
+}
+.form-title{
+    font-size: 16px;
+    margin: 15px;
+    color: rgb(177, 219, 255);
+}
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: start;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+.form-control{
+    padding: 7px;
+    border-radius: 7px;
+    outline: none;
+    background-color: rgb(226, 226, 226);
+}
+.btn-search{
+    outline: none;
+    font-size: 16px;
+    padding: 7px 25px;
+    border-radius: 7px;
+    margin: 10px 0;
+    background-color: #2BE18A;
+    font-weight: bold;
+    color: rgb(32, 32, 32);
+    border: none;
+    cursor: pointer;
+}
+.btn-search:hover {
+    background-color: #2ace7f;
+}
+.btn-search:active {
+    position: relative;
+    top: 1px;
+}

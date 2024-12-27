@@ -14,7 +14,7 @@ import { Linha } from './linhas/linhas.entity';
       password: 'root',
       database: 'bus2',
       autoLoadEntities: true,
-      entities: [Linha, Viagem],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Use apenas em desenvolvimento!
     }),
     LinhasModule, // Importa o módulo de Linhas

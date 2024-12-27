@@ -1,29 +1,28 @@
 USE bus2;
 
-CREATE TABLE linhas (
+-- Tabela de Linhas
+CREATE TABLE IF NOT EXISTS linhas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    descricao TEXT NULL
+    tarifa DECIMAL(5,2) DEFAULT 0.00,
+    nro_pontos INT DEFAULT 0,
+    km DECIMAL(6,2) DEFAULT 0.00
 );
 
-CREATE TABLE viagens (
+-- Tabela de Viagens
+CREATE TABLE IF NOT EXISTS viagens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     linha_id INT NOT NULL,
-    caminho TEXT NULL,
+    caminho TEXT NOT NULL,
     FOREIGN KEY (linha_id) REFERENCES linhas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE paradas (
+-- Tabela de Paradas
+CREATE TABLE IF NOT EXISTS paradas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL
-);
-
-CREATE TABLE viagens_paradas (
     viagem_id INT NOT NULL,
-    parada_id INT NOT NULL,
-    PRIMARY KEY (viagem_id, parada_id),
-    FOREIGN KEY (viagem_id) REFERENCES viagens(id) ON DELETE CASCADE,
-    FOREIGN KEY (parada_id) REFERENCES paradas(id) ON DELETE CASCADE
+    nome VARCHAR(255) NOT NULL,
+    lat DECIMAL(9,6) NOT NULL,
+    lng DECIMAL(9,6) NOT NULL,
+    FOREIGN KEY (viagem_id) REFERENCES viagens(id) ON DELETE CASCADE
 );
