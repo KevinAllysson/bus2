@@ -1,23 +1,30 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Viagem } from '../viagens/viagens.entity'; // Relacione com a tabela de viagens
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Viagem } from '../viagens/viagens.entity';
 
 @Entity('paradas')
 export class Parada {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    nome: string;
+  @Column()
+  viagem_id: number;
 
-    @Column('decimal', { precision: 10, scale: 6 })
-    lat: number;
+  @Column()
+  sequencia: number;
 
-    @Column('decimal', { precision: 10, scale: 6 })
-    lng: number;
+  @Column()
+  parada_id: number;
 
-    @ManyToOne(() => Viagem, (viagem) => viagem.paradas, { nullable: true })
-    viagem: Viagem;
-    
-    @Column({ nullable: true })
-    viagemId: number;
+  @Column('decimal', { precision: 9, scale: 6 })
+  latitude: number;
+
+  @Column('decimal', { precision: 9, scale: 6 })
+  longitude: number;
+
+  @Column()
+  nome_parada: string;
+
+  @ManyToOne(() => Viagem, (viagem) => viagem.paradas, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'viagem_id' })
+  viagem: Viagem;
 }

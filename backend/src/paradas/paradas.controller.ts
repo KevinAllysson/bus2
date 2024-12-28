@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Delete, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ParadasService } from './paradas.service';
 import { ApiBody } from '@nestjs/swagger';
 import { Repository } from 'typeorm';
@@ -16,27 +16,13 @@ export class ParadasController {
         private readonly paradaRepository: Repository<Parada>, // Injeta o repositório
     ) { }
 
-    @Get()
-    async findAll(): Promise<Parada[]> {
-        return this.paradasService.findAll();
-    }
-
-    @Get('viagem')
-    async findByViagemId(@Query('viagemId') viagemId?: number): Promise<Parada[]> {
-        if (viagemId) {
-            return this.paradaRepository.find({ where: { viagemId } });
-        }
-        return this.paradaRepository.find();
+    @Get('/viagem/:viagem_id')
+    async findByViagem(@Param('viagem_id') viagem_id: number): Promise<Parada[]> {
+        return this.paradasService.findByViagem(viagem_id);
     }
 
     @Post()
-    @ApiBody({ type: CreateParadaDto }) // Adiciona o body esperado no Swagger
-    create(@Body() createParadaDto: CreateParadaDto) {
-        return this.paradasService.create(createParadaDto);
-    }
-
-    @Delete(':id')
-    delete(@Param('id') id: number): Promise<void> {
-        return this.paradasService.delete(id);
+    async create(@Body() createParadaDto: CreateParadaDto): Promise<Parada> {
+        return this.paradasService.createParada(createParadaDto);
     }
 }

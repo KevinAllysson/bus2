@@ -1,24 +1,26 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Linha } from '../linhas/linhas.entity';
+import { Parada } from '../paradas/paradas.entity';
 
 @Entity('viagens')
 export class Viagem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text') // Certifique-se de que 'caminho' é armazenado como TEXT
+  @Column()
+  linha_id: number;
+
+  @Column()
+  nome: string;
+
+  @Column('text')
   caminho: string;
 
-  @Column({ name: 'linha_id' }) // Mapeia a coluna linha_id no banco
-  linhaId: number;
-
   @ManyToOne(() => Linha, (linha) => linha.viagens, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'linha_id' }) // Define a coluna de junção explicitamente
+  @JoinColumn({ name: 'linha_id' })
   linha: Linha;
 
-  @Column({ nullable: true })
-  descricao: string; // Coluna opcional para descrever a viagem (se necessário).
-
-  @Column('simple-json', { nullable: true }) // Coluna para armazenar as paradas em formato JSON
-  paradas: { lat: number; lng: number; nome: string }[];
+  // Relacionamento com Paradas
+  @OneToMany(() => Parada, (parada) => parada.viagem, { cascade: true })
+  paradas: Parada[];
 }

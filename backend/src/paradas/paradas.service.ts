@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Parada } from './paradas.entity';
+import { Viagem } from '../viagens/viagens.entity';
 import { CreateParadaDto } from './dto/create-parada.dto';
 
 @Injectable()
@@ -9,24 +10,24 @@ export class ParadasService {
   constructor(
     @InjectRepository(Parada)
     private readonly paradasRepository: Repository<Parada>,
+    @InjectRepository(Viagem) // Injete o repositório de Viagem
+    private readonly viagemRepository: Repository<Viagem>,
   ) {}
 
-  async findAll(): Promise<Parada[]> {
+  async findByViagem(viagem_id: number): Promise<Parada[]> {
     return this.paradasRepository.find({
-      select: ['id', 'nome', 'lat', 'lng', 'viagemId'], 
+      where: { viagem_id },
     });
   }
 
-  findById(id: number): Promise<Parada> {
-    return this.paradasRepository.findOne({ where: { id } });
-  }
-
-  create(createParadaDto: CreateParadaDto): Promise<Parada> {
-    const parada = this.paradasRepository.create(createParadaDto);
-    return this.paradasRepository.save(parada);
-  }
-
-  delete(id: number): Promise<void> {
-    return this.paradasRepository.delete(id).then(() => undefined);
+  async createParada(createParadaDto: CreateParadaDto): Promise<Parada> {
+    const viagem = await this.viagemRepository.findOneBy({ id: createParadaDto.viagem_id });
+  
+    if (!viagem) {
+      throw new NotFoundException('Viagem não encontrada');
+    }
+  
+    const novaParada = this.paradasRepository.create(createParadaDto);
+    return this.paradasRepository.save(novaParada);
   }
 }

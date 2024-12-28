@@ -4,7 +4,7 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"' 
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(id, nome, tarifa, nro_pontos, km);
+(id, codigo, nome, cor);
 
 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 9.1/Uploads/viagens.csv'
@@ -13,13 +13,13 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"' 
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(id, linha_id, caminho);
+(id, linha_id, nome, caminho);
 
 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 9.1/Uploads/paradas.csv'
 INTO TABLE paradas
 FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"' 
+OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(id, viagem_id, nome, lat, lng);
+(viagem_id, sequencia, parada_id, latitude, longitude, nome_parada);
