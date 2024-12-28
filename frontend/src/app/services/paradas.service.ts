@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root', // Disponível globalmente como um provider
@@ -10,7 +12,36 @@ export class ParadasService {
 
     constructor(private http: HttpClient) { }
 
-    getParadas(): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
+    getParadas(): Observable<any[]> {
+        return this.http.get<any[]>(this.apiUrl);
+    }
+
+    getAllParadas(): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
+        return this.http.get<{ id: number; nome: string; lat: number; lng: number }[]>(this.apiUrl);
+    }
+
+    // Obtém paradas por ID da viagem
+    getParadasByViagemId(viagemId: number): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
+        const endpoint = `${this.apiUrl}/viagem/${viagemId}`;
+        return this.http.get<{ id: number; nome: string; lat: number; lng: number }[]>(endpoint).pipe(
+            map((paradas) =>
+                paradas.filter((parada) => {
+                    const isValid = typeof parada.lat === 'number' && typeof parada.lng === 'number';
+                    if (!isValid) {
+                        console.warn(`Parada inválida encontrada e ignorada:`, parada);
+                    }
+                    return isValid;
+                })
+            ),
+            catchError((error) => {
+                console.error('Erro ao obter paradas:', error);
+                return of([]); // Retorna um Observable vazio em caso de erro
+            })
+        );
+    }
+
+    // Caso precise buscar todas as paradas (se disponível futuramente)
+    getTodasParadas(): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
         return this.http.get<{ id: number; nome: string; lat: number; lng: number }[]>(this.apiUrl).pipe(
             map((paradas) =>
                 paradas.filter((parada) => {
@@ -23,8 +54,6 @@ export class ParadasService {
             )
         );
     }
-    
-    getParadasByViagemId(viagemId: number): Observable<any[]> {
-        return this.http.get<any[]>(`/api/paradas`, { params: { viagemId: viagemId.toString() } });
-    }
+
+
 }

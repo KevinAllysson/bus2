@@ -35,6 +35,11 @@ export class LinhasController {
     async findViagensByLinha(@Param('id') linhaId: number) {
       return this.viagemService.findByLinhaId(linhaId);
     }
+    
+    @Get()
+    async findAll(): Promise<Linha[]> {
+      return this.linhasService.findAll();
+    }
 
     @Delete(':id')
     @ApiOperation({ summary: 'Remove uma linha existente' })

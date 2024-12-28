@@ -16,10 +16,7 @@ export class ApiService {
 
   // Novo método para buscar viagens por linha
   getViagensByLinha(linhaId: number): Observable<any[]> { 
-    return this.http.get<any[]>(`${this.baseUrl}/linhas/${linhaId}/detalhes`);
+    return this.http.get<any[]>(`${this.baseUrl}/linhas/${linhaId}/viagens`);
   }
-
-  getParadas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/paradas`);
-  }
+  
 }

@@ -6,8 +6,8 @@ export class Parada {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  viagem_id: number;
+  @Column({ name: 'viagem_id' }) 
+  viagemId: number;
 
   @Column()
   sequencia: number;

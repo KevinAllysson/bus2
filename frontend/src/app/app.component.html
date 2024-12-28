@@ -18,7 +18,7 @@
                     <div class="separete-line">
                         <div class="line-center"></div>
                     </div>
-                    <app-formulario (viagemSelecionada)="viagem = $event" (resetMapa)="onResetMapa()" (viagemChange)="loadParadas($event)"></app-formulario>
+                    <app-formulario (viagemSelecionada)="viagem = $event" (resetMapa)="onResetMapa()" (viagemChange)="handleViagemChange($event)"></app-formulario>
                 </div>
 
                 <div *ngIf="!showForm">

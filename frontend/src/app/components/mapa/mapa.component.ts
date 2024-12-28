@@ -25,6 +25,7 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
     @Input() showForm: boolean = true;
     @Input() paradas: { lat: number; lng: number; nome: string }[] = [];
     @Output() paradasCarregadas = new EventEmitter<any[]>();
+    @Input() selectedViagem!: number | string;
 
     // Ícones FontAwesome
     faAngleRight = faAngleRight;
@@ -42,7 +43,6 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
 
     polyline: google.maps.Polyline | null = null;
     markers: google.maps.Marker[] = [];
-    selectedViagem!: number;
 
     resetMapa(): void {
         if (this.googleMap?.googleMap) {
@@ -56,9 +56,9 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.paradasService.getParadas().subscribe((paradas) => {
-            this.addMarkers(paradas);
-        });
+        // this.paradasService.getParadas().subscribe((paradas) => {
+        //     this.addMarkers(paradas);
+        // });
     }
 
     toggleForm(): void {
@@ -174,14 +174,16 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
 
         this.addMarkers(paradas);
     }
-    public loadParadas(viagemId?: string | number): void {
-        const viagemIdNumber = typeof viagemId === 'string' ? Number(viagemId) : viagemId;
-        if (!viagemIdNumber || isNaN(viagemIdNumber)) {
-            console.warn('viagemId inválido ou não fornecido. Ignorando a chamada para getParadasByViagemId.');
+
+    loadParadas(viagemId?: number): void {
+        console.log('here')
+        if (!viagemId) {
+            this.paradasService.getAllParadas().subscribe((paradas) => {
+                this.addMarkers(paradas);
+            });
             return;
         }
-    
-        this.paradasService.getParadasByViagemId(viagemIdNumber).subscribe((paradas) => {
+        this.paradasService.getParadasByViagemId(viagemId).subscribe((paradas) => {
             this.addMarkers(paradas);
         });
     }
@@ -192,23 +194,23 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
         });
     }
 
-    public  addMarkers(paradas: { nome: string; lat: number | string; lng: number | string }[]): void {
-        const googleMapInstance = this.googleMap.googleMap;
-        this.paradasCarregadas.emit(paradas); 
-        if (!googleMapInstance) {
-            console.error('Google Map não está inicializado. Não é possível adicionar marcadores.');
-            return;
-        }
-    
-        // Limpa marcadores existentes
+    private addMarkers(paradas: { nome: string; lat: number | string; lng: number | string }[]): void {
+        
+        console.log('here')
         this.markers.forEach((marker) => marker.setMap(null));
         this.markers = [];
     
-        // Adiciona novos marcadores com validação
-        paradas.forEach((parada) => {
-            const lat = parseFloat(parada.lat as string);
-            const lng = parseFloat(parada.lng as string);
+        const googleMapInstance = this.googleMap?.googleMap;
+        if (!googleMapInstance) {
+            console.error('O Google Map não está inicializado. Não é possível adicionar marcadores.');
+            return;
+        }
     
+        paradas.forEach((parada) => {
+            const lat = typeof parada.lat === 'string' ? parseFloat(parada.lat) : parada.lat;
+            const lng = typeof parada.lng === 'string' ? parseFloat(parada.lng) : parada.lng;
+    
+            // Valida se lat e lng são números válidos
             if (isNaN(lat) || isNaN(lng)) {
                 console.warn(`Parada inválida ignorada:`, parada);
                 return; 
@@ -218,21 +220,14 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                 position: { lat, lng },
                 title: parada.nome,
                 icon: {
-                    url: '../../img/bus-stop.png', // Ícone personalizado
-                    scaledSize: new google.maps.Size(32, 32),
+                    url: '../../img/bus-stop.png', // Caminho para o ícone do marcador
+                    scaledSize: new google.maps.Size(32, 32), // Define o tamanho do ícone
                 },
             });
     
-            // Adiciona evento de clique no marcador
-            marker.addListener('click', () => {
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `<div><strong>${parada.nome}</strong></div>`,
-                });
-                infoWindow.open(googleMapInstance, marker);
-            });
-    
-            marker.setMap(googleMapInstance);
-            this.markers.push(marker);
+            marker.setMap(googleMapInstance); // Adiciona o marcador ao mapa
+            this.markers.push(marker); // Armazena o marcador para futura limpeza
         });
     }
+    
 }

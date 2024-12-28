@@ -24,21 +24,17 @@ export class FormularioComponent implements OnInit {
     linhas: any[] = [];
     viagensFiltradas: any[] = [];
     selectedLinha: number | null = null;
-    selectedViagem: string | null = null; 
+    selectedViagem: string | null = null;
     rotaBuscada = false;
     viagens: any[] = [];
     constructor(private apiService: ApiService) { }
 
     onViagemChange(): void {
-        const viagemId = Number(this.selectedViagem);
-    
-        if (!isNaN(viagemId)) {
-            this.viagemChange.emit(viagemId); 
-        } else {
-            console.warn('Viagem inválida selecionada:', this.selectedViagem);
+        if (this.selectedViagem) {
+            const numericViagemId = typeof this.selectedViagem === 'string' ? parseInt(this.selectedViagem, 10) : this.selectedViagem;
+            this.viagemChange.emit(numericViagemId);
         }
-    }
-    
+    }   
 
     ngOnInit(): void {
         this.loadLinhas();
@@ -59,13 +55,20 @@ export class FormularioComponent implements OnInit {
         if (this.selectedLinha) {
             this.apiService.getViagensByLinha(this.selectedLinha).subscribe({
                 next: (data: any) => {
-                    this.viagensFiltradas = data.viagens.map((viagem: any) => ({
-                        ...viagem,
-                        descricao: `Viagem ${viagem.id} `,
-                    }));
+                    if (Array.isArray(data)) { 
+
+                        this.viagensFiltradas = data.map((viagem: any) => ({
+                            ...viagem,
+                            descricao: `Viagem ${viagem.id} `,
+                        }));
+                    } else {
+                        console.warn('Resposta da API não é um array:', data);
+                        this.viagensFiltradas = []; 
+                    }
                 },
                 error: (error) => {
                     console.error('Erro ao buscar viagens:', error);
+                    this.viagensFiltradas = []; 
                 },
             });
         } else {
@@ -77,7 +80,7 @@ export class FormularioComponent implements OnInit {
         const viagem = this.viagensFiltradas.find((v) => v.id === Number(this.selectedViagem));
         if (viagem) {
             this.rotaBuscada = true;
-            this.viagemSelecionada.emit(viagem); // Envia a viagem selecionada
+            this.viagemSelecionada.emit(viagem); 
         } else {
             console.error('Viagem não encontrada!');
         }

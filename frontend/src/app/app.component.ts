@@ -9,7 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { IconsViewComponent } from './components/icons-view/icons-view.component';
 import { LoginComponent } from './components/login/login.component';
-import { ParadasService } from './services/paradas.service'; 
+import { ParadasService } from './services/paradas.service';
 
 @Component({
   standalone: true,
@@ -31,6 +31,15 @@ export class AppComponent implements OnInit {
   listaDeParadas: any = null;
 
   constructor(private titleService: Title, private router: Router, private paradasService: ParadasService) { }
+
+  handleViagemChange(viagemId: number): void {
+    if (this.mapaComponent) {
+        this.mapaComponent.loadParadas(viagemId);
+    } else {
+        console.error('MapaComponent não está disponível.');
+    }
+}
+
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -59,15 +68,4 @@ export class AppComponent implements OnInit {
   toggleForm(): void {
     this.showForm = !this.showForm;
   }
-  loadParadas(viagemId: number): void {
-    this.paradasService.getParadasByViagemId(viagemId).subscribe((paradas) => {
-      this.mapaComponent.addMarkers(paradas); 
-    });
-
-  }
-  handleParadas(paradas: any[]): void {
-    this.mapaComponent.addMarkers(paradas); 
-  }
-
-
 }

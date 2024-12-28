@@ -10,15 +10,16 @@ export class ParadasService {
   constructor(
     @InjectRepository(Parada)
     private readonly paradasRepository: Repository<Parada>,
-    @InjectRepository(Viagem) // Injete o repositório de Viagem
+    @InjectRepository(Viagem) 
     private readonly viagemRepository: Repository<Viagem>,
   ) {}
 
-  async findByViagem(viagem_id: number): Promise<Parada[]> {
+  async findByViagem(viagemId: number): Promise<Parada[]> {
     return this.paradasRepository.find({
-      where: { viagem_id },
+      where: { viagemId }, 
     });
   }
+  
 
   async createParada(createParadaDto: CreateParadaDto): Promise<Parada> {
     const viagem = await this.viagemRepository.findOneBy({ id: createParadaDto.viagem_id });
@@ -29,5 +30,13 @@ export class ParadasService {
   
     const novaParada = this.paradasRepository.create(createParadaDto);
     return this.paradasRepository.save(novaParada);
+  }
+
+  async findByViagemId(viagemId: number): Promise<Parada[]> {
+    return this.paradasRepository.find({ where: { viagemId } });
+  }
+  
+  async findAll(): Promise<Parada[]> {
+    return this.paradasRepository.find();
   }
 }
