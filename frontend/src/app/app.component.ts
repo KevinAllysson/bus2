@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild  } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -9,6 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { IconsViewComponent } from './components/icons-view/icons-view.component';
 import { LoginComponent } from './components/login/login.component';
+import { ParadasService } from './services/paradas.service'; 
 
 @Component({
   standalone: true,
@@ -19,7 +20,7 @@ import { LoginComponent } from './components/login/login.component';
   imports: [RouterModule, FormularioComponent, CommonModule, MapaComponent, FontAwesomeModule, IconsViewComponent, LoginComponent],
 })
 export class AppComponent implements OnInit {
-  @ViewChild('mapa') mapaComponent!: MapaComponent; 
+  @ViewChild('mapa') mapaComponent!: MapaComponent;
 
   title = 'BusFinder';
   isLoggedIn = false;
@@ -29,7 +30,7 @@ export class AppComponent implements OnInit {
   faAngleRight = faAngleRight;
   listaDeParadas: any = null;
 
-  constructor(private titleService: Title, private router: Router) {}
+  constructor(private titleService: Title, private router: Router, private paradasService: ParadasService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -51,11 +52,22 @@ export class AppComponent implements OnInit {
   }
 
   onLoginSuccess(): void {
-    this.isLoggedIn = true; 
-    this.router.navigate(['/mapa']); 
+    this.isLoggedIn = true;
+    this.router.navigate(['/mapa']);
   }
 
   toggleForm(): void {
     this.showForm = !this.showForm;
   }
+  loadParadas(viagemId: number): void {
+    this.paradasService.getParadasByViagemId(viagemId).subscribe((paradas) => {
+      this.mapaComponent.addMarkers(paradas); 
+    });
+
+  }
+  handleParadas(paradas: any[]): void {
+    this.mapaComponent.addMarkers(paradas); 
+  }
+
+
 }

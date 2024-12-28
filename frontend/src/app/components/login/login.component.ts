@@ -21,10 +21,8 @@ export class LoginComponent {
         const validPassword = '12345';
 
         if (this.username === validUser && this.password === validPassword) {
-            console.log('Login realizado no LoginComponent');
 
-            this.loginSuccess.emit(); // Emite o evento para informar o AppComponent
-            console.log('Evento loginSuccess emitido!');
+            this.loginSuccess.emit(); 
         } else {
             this.errorMessage = 'Usuário ou senha inválidos.';
         }

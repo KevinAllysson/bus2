@@ -18,15 +18,27 @@ import { ApiService } from '../../services/api.service';
     providers: [ApiService]
 })
 export class FormularioComponent implements OnInit {
+    @Output() viagemChange = new EventEmitter<number>();
     @Output() resetMapa = new EventEmitter<void>();
     @Output() viagemSelecionada = new EventEmitter<any>(); // Evento para enviar a viagem selecionada
     linhas: any[] = [];
     viagensFiltradas: any[] = [];
     selectedLinha: number | null = null;
-    selectedViagem: number | null = null;
+    selectedViagem: string | null = null; 
     rotaBuscada = false;
-
+    viagens: any[] = [];
     constructor(private apiService: ApiService) { }
+
+    onViagemChange(): void {
+        const viagemId = Number(this.selectedViagem);
+    
+        if (!isNaN(viagemId)) {
+            this.viagemChange.emit(viagemId); 
+        } else {
+            console.warn('Viagem inválida selecionada:', this.selectedViagem);
+        }
+    }
+    
 
     ngOnInit(): void {
         this.loadLinhas();
@@ -64,18 +76,18 @@ export class FormularioComponent implements OnInit {
     buscarViagem(): void {
         const viagem = this.viagensFiltradas.find((v) => v.id === Number(this.selectedViagem));
         if (viagem) {
-            this.rotaBuscada = true; 
+            this.rotaBuscada = true;
             this.viagemSelecionada.emit(viagem); // Envia a viagem selecionada
         } else {
             console.error('Viagem não encontrada!');
         }
     }
     limparFormulario(): void {
-        this.rotaBuscada = false; 
+        this.rotaBuscada = false;
         this.selectedLinha = null;
-        this.selectedViagem = null; 
+        this.selectedViagem = null;
         this.viagensFiltradas = [];
 
-        this.resetMapa.emit(); 
+        this.resetMapa.emit();
     }
 }

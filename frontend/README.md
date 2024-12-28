@@ -1,59 +1,131 @@
-# Frontend
+# Como Executar o Sistema Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+Este documento fornece as instruções para configurar e executar o sistema frontend do projeto de mapa interativo utilizando Angular.
 
-## Development server
+## Pré-requisitos
+Certifique-se de ter os seguintes itens instalados:
 
-To start a local development server, run:
+1. **Node.js** (versão LTS recomendada) e **npm**:
+   - [Baixar Node.js](https://nodejs.org/)
+2. **Angular CLI**:
+   - [Instalar Angular CLI](https://angular.io/cli):
+     ```bash
+     npm install -g @angular/cli
+     ```
 
-```bash
-ng serve
+## Estrutura do Repositório
+Abaixo está a estrutura do diretório do frontend para facilitar a navegação:
+
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   │   ├── formulario/         # Componente do formulário de entrada
+│   │   │   │   ├── formulario.component.html
+│   │   │   │   ├── formulario.component.scss
+│   │   │   │   ├── formulario.component.spec.ts
+│   │   │   │   └── formulario.component.ts
+│   │   │   ├── login/              # Componente de login
+│   │   │   │   ├── login.component.html
+│   │   │   │   ├── login.component.scss
+│   │   │   │   ├── login.component.spec.ts
+│   │   │   │   └── login.component.ts
+│   │   │   ├── mapa/               # Componente do mapa interativo
+│   │   │   │   ├── mapa.component.html
+│   │   │   │   ├── mapa.component.scss
+│   │   │   │   ├── mapa.component.spec.ts
+│   │   │   │   └── mapa.component.ts
+│   │   ├── services/               # Serviços para comunicação com o backend
+│   │   │   ├── api.service.ts
+│   │   │   ├── linhas.service.ts
+│   │   │   ├── mapas.service.ts
+│   │   │   ├── paradas.service.ts
+│   │   │   └── viagens.service.ts
+│   │   ├── app.component.html      # Componente principal
+│   │   ├── app.component.scss
+│   │   ├── app.component.ts
+│   │   ├── app.module.ts
+│   │   └── app-routing.module.ts
+│   ├── index.html                  # HTML principal
+│   ├── main.ts                     # Ponto de entrada do Angular
+│   ├── styles.scss                 # Estilos globais
+├── angular.json                    # Configuração do Angular
+├── package.json                    # Dependências do projeto
+└── tsconfig.json                   # Configuração do TypeScript
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Configuração do Projeto
 
-## Code scaffolding
+1. **Clone o Repositório**:
+   Faça o clone do repositório para sua máquina local:
+   ```bash
+   git clonehttps://github.com/KevinAllysson/bus2.git
+   cd bus2/frontend
+   ```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+2. **Instale as Dependências**:
+   No diretório do frontend, execute o seguinte comando:
+   ```bash
+   npm install
+   ```
 
-```bash
-ng generate component component-name
-```
+3. **Configuração da URL do Backend**:
+   Certifique-se de que a URL do backend está definida corretamente no arquivo `api.service.ts` ou outro serviço relevante. Exemplo:
+   ```typescript
+   private baseUrl = 'http://localhost:3000'; // URL do backend
+   ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Execução do Sistema
 
-```bash
-ng generate --help
-```
+1. **Iniciar o Servidor**:
+   Execute o seguinte comando para iniciar o servidor de desenvolvimento:
+   ```bash
+   ng serve
+   ```
 
-## Building
+2. **Acessar o Sistema**:
+   O sistema estará disponível no navegador em:
+   ```
+   http://localhost:4200
+   ```
 
-To build the project run:
+## Funcionalidades Implementadas
 
-```bash
-ng build
-```
+- **Login:** Página inicial simples para login.
+- **Mapa Interativo:**
+  - Exibe paradas de ônibus como marcadores.
+  - Permite seleção de linhas e viagens.
+  - Atualiza o mapa com base na interação do usuário.
+- **Formulário:** Entrada de dados (a ser configurada).
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Scripts Disponíveis
 
-## Running unit tests
+- `ng serve`: Inicia o servidor de desenvolvimento.
+- `ng test`: Executa os testes unitários do frontend usando Karma.
+- `ng build`: Gera a build para produção.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Solução de Problemas
 
-```bash
-ng test
-```
+1. **Angular CLI Não Encontrado**:
+   - Se você receber um erro indicando que o Angular CLI não está instalado, execute:
+     ```bash
+     npm install -g @angular/cli
+     ```
 
-## Running end-to-end tests
+2. **Erro de Conexão com o Backend**:
+   - Certifique-se de que o backend está rodando e que a URL no serviço (`api.service.ts`) está configurada corretamente.
 
-For end-to-end (e2e) testing, run:
+3. **Porta em Uso**:
+   - Caso a porta 4200 já esteja ocupada, inicie o servidor em outra porta:
+     ```bash
+     ng serve --port 4300
+     ```
 
-```bash
-ng e2e
-```
+## Contribuição
+Para contribuir com o projeto:
+1. Faça um fork do repositório.
+2. Crie uma branch para suas alterações.
+3. Envie um pull request explicando suas mudanças.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---

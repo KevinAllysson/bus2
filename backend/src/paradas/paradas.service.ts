@@ -11,8 +11,10 @@ export class ParadasService {
     private readonly paradasRepository: Repository<Parada>,
   ) {}
 
-  findAll(): Promise<Parada[]> {
-    return this.paradasRepository.find();
+  async findAll(): Promise<Parada[]> {
+    return this.paradasRepository.find({
+      select: ['id', 'nome', 'lat', 'lng', 'viagemId'], 
+    });
   }
 
   findById(id: number): Promise<Parada> {

@@ -1,4 +1,4 @@
-id,viagem_id,nome,lat,lng
+id,viagemId,nome,lat,lng
 1,1,"Parada 1",-26.91234,-49.08234
 2,1,"Parada 2",-26.91456,-49.08456
 3,2,"Parada 3",-26.91678,-49.08678

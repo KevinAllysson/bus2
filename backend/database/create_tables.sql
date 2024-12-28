@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS viagens (
 -- Tabela de Paradas
 CREATE TABLE IF NOT EXISTS paradas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    viagem_id INT NOT NULL,
+    viagemId INT NOT NULL,
     nome VARCHAR(255) NOT NULL,
     lat DECIMAL(9,6) NOT NULL,
     lng DECIMAL(9,6) NOT NULL,

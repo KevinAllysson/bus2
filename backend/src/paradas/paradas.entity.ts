@@ -17,4 +17,7 @@ export class Parada {
 
     @ManyToOne(() => Viagem, (viagem) => viagem.paradas, { nullable: true })
     viagem: Viagem;
+    
+    @Column({ nullable: true })
+    viagemId: number;
 }
