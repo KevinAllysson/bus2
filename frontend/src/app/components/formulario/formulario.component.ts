@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
-
+import { LinhasService } from '../../services/linhas.service'; 
 
 @Component({
     selector: 'app-formulario',
@@ -15,33 +15,28 @@ import { ApiService } from '../../services/api.service';
         FormsModule,
         HttpClientModule
     ],
-    providers: [ApiService]
+    providers: [ApiService, LinhasService] 
 })
 export class FormularioComponent implements OnInit {
     @Output() viagemChange = new EventEmitter<number>();
     @Output() resetMapa = new EventEmitter<void>();
-    @Output() viagemSelecionada = new EventEmitter<any>(); // Evento para enviar a viagem selecionada
+    @Output() viagemSelecionada = new EventEmitter<any>();
+    @Output() paradasCarregadas = new EventEmitter<any[]>();
+
     linhas: any[] = [];
     viagensFiltradas: any[] = [];
     selectedLinha: number | null = null;
     selectedViagem: string | null = null;
     rotaBuscada = false;
-    viagens: any[] = [];
-    constructor(private apiService: ApiService) { }
 
-    onViagemChange(): void {
-        if (this.selectedViagem) {
-            const numericViagemId = typeof this.selectedViagem === 'string' ? parseInt(this.selectedViagem, 10) : this.selectedViagem;
-            this.viagemChange.emit(numericViagemId);
-        }
-    }   
+    constructor(private apiService: ApiService, private linhasService: LinhasService) { }
 
     ngOnInit(): void {
         this.loadLinhas();
     }
 
     loadLinhas(): void {
-        this.apiService.getLinhas().subscribe({
+        this.linhasService.getLinhas().subscribe({
             next: (data: any[]) => {
                 this.linhas = data;
             },
@@ -53,22 +48,21 @@ export class FormularioComponent implements OnInit {
 
     onLinhaChange(): void {
         if (this.selectedLinha) {
-            this.apiService.getViagensByLinha(this.selectedLinha).subscribe({
-                next: (data: any) => {
-                    if (Array.isArray(data)) { 
-
-                        this.viagensFiltradas = data.map((viagem: any) => ({
+            this.linhasService.getViagensByLinhaId(this.selectedLinha).subscribe({
+                next: (data: any[]) => {
+                    if (Array.isArray(data) && data.length > 0) {
+                        this.viagensFiltradas = data.map((viagem) => ({
                             ...viagem,
-                            descricao: `Viagem ${viagem.id} `,
+                            descricao: `Viagem ${viagem.id} - ${viagem.nome}`,
                         }));
                     } else {
-                        console.warn('Resposta da API não é um array:', data);
-                        this.viagensFiltradas = []; 
+                        console.warn('Nenhuma viagem encontrada para a linha:', this.selectedLinha);
+                        this.viagensFiltradas = [];
                     }
                 },
                 error: (error) => {
                     console.error('Erro ao buscar viagens:', error);
-                    this.viagensFiltradas = []; 
+                    this.viagensFiltradas = [];
                 },
             });
         } else {
@@ -81,10 +75,20 @@ export class FormularioComponent implements OnInit {
         if (viagem) {
             this.rotaBuscada = true;
             this.viagemSelecionada.emit(viagem); 
+
+            this.linhasService.getParadasByViagemId(viagem.id).subscribe({
+                next: (paradas) => {
+                    this.paradasCarregadas.emit(paradas);
+                },
+                error: (error) => {
+                    console.error('Erro ao carregar paradas:', error);
+                },
+            });
         } else {
             console.error('Viagem não encontrada!');
         }
     }
+
     limparFormulario(): void {
         this.rotaBuscada = false;
         this.selectedLinha = null;

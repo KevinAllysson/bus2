@@ -1,50 +1,72 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
-import { ViagemService } from './viagem.service';
-import { CreateViagemDto } from './dto/create-viagem.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { ViagensService } from './viagem.service';
 import { Viagem } from './viagens.entity';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 
-@ApiTags('Viagens') // Esse decorador garante que as APIs de viagens apareçam no Swagger
+@ApiTags('Viagens')
 @Controller('viagens')
-export class ViagemController {
-  constructor(private readonly viagemService: ViagemService) {}
+export class ViagensController {
+  constructor(private readonly viagensService: ViagensService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cria uma nova viagem' })
-  @ApiResponse({ status: 201, description: 'Viagem criada com sucesso.' })
-  @ApiResponse({ status: 400, description: 'Dados inválidos.' })
-  async create(@Body() createViagemDto: CreateViagemDto): Promise<Viagem> {
-    return this.viagemService.create(createViagemDto);
+  @ApiOperation({ summary: 'Cria uma nova viagem', description: 'Adiciona uma nova viagem ao sistema.' })
+  async create(@Body() viagemData: Partial<Viagem>): Promise<Viagem> {
+    return this.viagensService.create(viagemData);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista todas as viagens' })
-  @ApiResponse({ status: 200, description: 'Lista de viagens retornada com sucesso.' })
+  @ApiOperation({ summary: 'Obtém todas as viagens', description: 'Retorna uma lista de todas as viagens disponíveis no sistema.' })
   async findAll(): Promise<Viagem[]> {
-    return this.viagemService.findAll();
+    try {
+      return await this.viagensService.findAll();
+    } catch (error) {
+      console.error('Erro no controlador de viagens:', error);
+      throw error;
+    }
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Busca uma viagem pelo ID' })
-  @ApiResponse({ status: 200, description: 'Detalhes da viagem retornados com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Viagem não encontrada.' })
+  @ApiOperation({
+    summary: 'Obtém uma viagem por ID',
+    description: 'Retorna os detalhes de uma viagem específica com base no ID fornecido.',
+  })
+  @ApiParam({ name: 'id', description: 'ID da viagem a ser buscada', type: Number })
   async findOne(@Param('id') id: number): Promise<Viagem> {
-    return this.viagemService.findOne(id);
+    return this.viagensService.findOne(id);
+  }
+
+  @Get('linha/:linhaId') 
+  @ApiOperation({
+    summary: 'Obter viagens por linha',
+    description: 'Retorna uma lista de viagens relacionadas ao ID da linha fornecida.',
+  })
+  @ApiParam({
+    name: 'linhaId',
+    description: 'ID da linha para buscar as viagens associadas',
+    required: true,
+    schema: { type: 'integer' },
+  })
+  async findByLinhaId(@Param('linhaId') linhaId: number): Promise<Viagem[]> {
+    return this.viagensService.findByLinhaId(linhaId); 
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Atualiza uma viagem existente' })
-  @ApiResponse({ status: 200, description: 'Viagem atualizada com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Viagem não encontrada.' })
-  async update(@Param('id') id: number, @Body() updateViagemDto: CreateViagemDto): Promise<Viagem> {
-    return this.viagemService.update(id, updateViagemDto);
+  @ApiOperation({
+    summary: 'Atualiza uma viagem por ID',
+    description: 'Atualiza as informações de uma viagem existente com base no ID fornecido.',
+  })
+  @ApiParam({ name: 'id', description: 'ID da viagem a ser atualizada', type: Number })
+  async update(@Param('id') id: number, @Body() updateData: Partial<Viagem>): Promise<Viagem> {
+    return this.viagensService.update(id, updateData);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove uma viagem' })
-  @ApiResponse({ status: 204, description: 'Viagem removida com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Viagem não encontrada.' })
+  @ApiOperation({
+    summary: 'Remove uma viagem por ID',
+    description: 'Remove uma viagem específica do sistema com base no ID fornecido.',
+  })
+  @ApiParam({ name: 'id', description: 'ID da viagem a ser removida', type: Number })
   async remove(@Param('id') id: number): Promise<void> {
-    return this.viagemService.remove(id);
+    return this.viagensService.remove(id);
   }
 }

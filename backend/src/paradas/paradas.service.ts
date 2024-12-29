@@ -1,42 +1,51 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Parada } from './paradas.entity';
-import { Viagem } from '../viagens/viagens.entity';
-import { CreateParadaDto } from './dto/create-parada.dto';
 
 @Injectable()
 export class ParadasService {
   constructor(
     @InjectRepository(Parada)
-    private readonly paradasRepository: Repository<Parada>,
-    @InjectRepository(Viagem) 
-    private readonly viagemRepository: Repository<Viagem>,
+    private readonly paradaRepository: Repository<Parada>,
   ) {}
 
-  async findByViagem(viagemId: number): Promise<Parada[]> {
-    return this.paradasRepository.find({
-      where: { viagemId }, 
+  // Criar uma nova parada
+  async create(paradaData: Partial<Parada>): Promise<Parada> {
+    const parada = this.paradaRepository.create(paradaData);
+    return this.paradaRepository.save(parada);
+  }
+
+  // Obter todas as paradas
+  async findAll(): Promise<Parada[]> {
+    return this.paradaRepository.find();
+  }
+
+  // Obter uma parada específica
+  async findOne(viagem_id: number, sequencia: number): Promise<Parada> {
+    return this.paradaRepository.findOne({
+      where: { viagem_id, sequencia },
     });
   }
-  
 
-  async createParada(createParadaDto: CreateParadaDto): Promise<Parada> {
-    const viagem = await this.viagemRepository.findOneBy({ id: createParadaDto.viagem_id });
-  
-    if (!viagem) {
-      throw new NotFoundException('Viagem não encontrada');
-    }
-  
-    const novaParada = this.paradasRepository.create(createParadaDto);
-    return this.paradasRepository.save(novaParada);
+  // Atualizar uma parada
+  async update(
+    viagem_id: number,
+    sequencia: number,
+    updateData: Partial<Parada>,
+  ): Promise<Parada> {
+    await this.paradaRepository.update({ viagem_id, sequencia }, updateData);
+    return this.findOne(viagem_id, sequencia);
+  }
+
+  // Remover uma parada
+  async remove(viagem_id: number, sequencia: number): Promise<void> {
+    await this.paradaRepository.delete({ viagem_id, sequencia });
   }
 
   async findByViagemId(viagemId: number): Promise<Parada[]> {
-    return this.paradasRepository.find({ where: { viagemId } });
-  }
-  
-  async findAll(): Promise<Parada[]> {
-    return this.paradasRepository.find();
+    return this.paradaRepository.find({
+      where: { viagem_id: viagemId },
+    });
   }
 }

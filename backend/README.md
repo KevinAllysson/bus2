@@ -130,8 +130,9 @@ backend/
   - `GET /paradas`: Buscar todas as paradas.
   - `GET /linhas`: Buscar todas as linhas.
   - `GET /viagens`: Buscar todas as viagens.
-  - `GET /viagens/:paradaId`: Buscar viagens associadas a uma parada.
+  - `GET /viagens/linha/:linhaId`: Buscar viagens associadas a uma linha.
   - `GET /paradas/:viagemId`: Buscar todas as paradas de uma viagem.
+  - `GET /viagens/:paradaId`: Buscar viagens associadas a uma parada.
 
 ## Scripts Disponíveis
 

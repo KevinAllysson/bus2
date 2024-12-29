@@ -19,7 +19,7 @@ IGNORE 1 ROWS
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 9.1/Uploads/paradas.csv'
 INTO TABLE paradas
 FIELDS TERMINATED BY ',' 
-OPTIONALLY ENCLOSED BY '"'
+OPTIONALLY ENCLOSED BY '"' 
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (viagem_id, sequencia, parada_id, latitude, longitude, nome_parada);

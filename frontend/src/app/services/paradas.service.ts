@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root', // Disponível globalmente como um provider
+    providedIn: 'root', 
 })
 export class ParadasService {
     private readonly apiUrl = 'http://localhost:3000/paradas';
@@ -35,12 +35,11 @@ export class ParadasService {
             ),
             catchError((error) => {
                 console.error('Erro ao obter paradas:', error);
-                return of([]); // Retorna um Observable vazio em caso de erro
+                return of([]);
             })
         );
     }
 
-    // Caso precise buscar todas as paradas (se disponível futuramente)
     getTodasParadas(): Observable<{ id: number; nome: string; lat: number; lng: number }[]> {
         return this.http.get<{ id: number; nome: string; lat: number; lng: number }[]>(this.apiUrl).pipe(
             map((paradas) =>

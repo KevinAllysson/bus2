@@ -1,26 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Linha } from '../linhas/linhas.entity';
-import { Parada } from '../paradas/paradas.entity';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity('viagens')
 export class Viagem {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @Column()
   linha_id: number;
 
-  @Column()
+  @Column({ length: 255 })
   nome: string;
 
-  @Column('text')
+  @Column('text') 
   caminho: string;
-
-  @ManyToOne(() => Linha, (linha) => linha.viagens, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'linha_id' })
-  linha: Linha;
-
-  // Relacionamento com Paradas
-  @OneToMany(() => Parada, (parada) => parada.viagem, { cascade: true })
-  paradas: Parada[];
 }

@@ -1,27 +1,22 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsDecimal, IsString, Length } from 'class-validator';
 
 export class CreateParadaDto {
-  @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   viagem_id: number;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   sequencia: number;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   parada_id: number;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsDecimal()
   latitude: number;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsDecimal()
   longitude: number;
 
-  @IsNotEmpty()
   @IsString()
+  @Length(1, 255)
   nome_parada: string;
 }

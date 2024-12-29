@@ -28,18 +28,13 @@ export class AppComponent implements OnInit {
   viagem: any = null;
   faAngleLeft = faAngleLeft;
   faAngleRight = faAngleRight;
-  listaDeParadas: any = null;
+  paradas: { lat: number; lng: number; nome: string }[] = [];
 
   constructor(private titleService: Title, private router: Router, private paradasService: ParadasService) { }
 
-  handleViagemChange(viagemId: number): void {
-    if (this.mapaComponent) {
-        this.mapaComponent.loadParadas(viagemId);
-    } else {
-        console.error('MapaComponent não está disponível.');
-    }
-}
-
+  onViagemSelecionada(viagem: any): void {
+    this.viagem = viagem;
+  }
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -53,6 +48,9 @@ export class AppComponent implements OnInit {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
     }
+  }
+  onParadasCarregadas(paradas: any[]): void {
+    this.paradas = paradas;
   }
   onResetMapa(): void {
     if (this.mapaComponent) {

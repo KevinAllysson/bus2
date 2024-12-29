@@ -1,55 +1,39 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Linha } from './linhas.entity';
-import { CreateLinhaDto } from './dto/create-linha.dto';
-import { UpdateLinhaDto } from './dto/update-linha.dto';
 
 @Injectable()
 export class LinhasService {
-    constructor(
-        @InjectRepository(Linha)
-        private readonly linhasRepository: Repository<Linha>,
-    ) { }
+  constructor(
+    @InjectRepository(Linha)
+    private readonly linhaRepository: Repository<Linha>,
+  ) {}
 
-    // Criar uma nova linha
-    async create(createLinhaDtos: CreateLinhaDto[]): Promise<Linha[]> {
-        await this.linhasRepository.clear();
-        const novasLinhas = this.linhasRepository.create(createLinhaDtos);
-        return this.linhasRepository.save(novasLinhas);
-    }
+  // Criar uma nova linha
+  async create(linhaData: Partial<Linha>): Promise<Linha> {
+    const linha = this.linhaRepository.create(linhaData);
+    return this.linhaRepository.save(linha);
+  }
 
-    // Atualizar uma linha existente
-    async update(id: number, updateLinhaDto: UpdateLinhaDto): Promise<Linha> {
-        const linha = await this.linhasRepository.findOneBy({ id });
-        if (!linha) {
-            throw new NotFoundException('Linha não encontrada');
-        }
+  // Obter todas as linhas
+  async findAll(): Promise<Linha[]> {
+    return this.linhaRepository.find();
+  }
 
-        Object.assign(linha, updateLinhaDto);
-        return this.linhasRepository.save(linha);
-    }
+  // Obter uma linha por ID
+  async findOne(id: number): Promise<Linha> {
+    return this.linhaRepository.findOne({ where: { id } });
+  }
 
-    // Buscar todas as linhas
-    async findAll(): Promise<Linha[]> {
-        return this.linhasRepository.find();
-    }
+  // Atualizar uma linha
+  async update(id: number, updateData: Partial<Linha>): Promise<Linha> {
+    await this.linhaRepository.update(id, updateData);
+    return this.findOne(id);
+  }
 
-    // Buscar uma linha pelo ID
-    async findOne(id: number): Promise<Linha> {
-        const linha = await this.linhasRepository.findOneBy({ id });
-        if (!linha) {
-            throw new NotFoundException('Linha não encontrada');
-        }
-        return linha;
-    }
-
-    // Remover uma linha
-    async remove(id: number): Promise<void> {
-        const linha = await this.linhasRepository.findOneBy({ id });
-        if (!linha) {
-            throw new NotFoundException('Linha não encontrada');
-        }
-        await this.linhasRepository.delete(id);
-    }
+  // Remover uma linha
+  async remove(id: number): Promise<void> {
+    await this.linhaRepository.delete(id);
+  }
 }

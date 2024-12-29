@@ -3,28 +3,26 @@ USE bus2;
 -- Tabela de Linhas
 CREATE TABLE linhas (
     id INT PRIMARY KEY,
-    codigo VARCHAR(50) NOT NULL,
+    codigo VARCHAR(10) NOT NULL,
     nome VARCHAR(255) NOT NULL,
     cor VARCHAR(7) NOT NULL
 );
 
--- Tabela de Viagens
+-- Tabela de Viagens (sem referência para linhas)
 CREATE TABLE viagens (
     id INT PRIMARY KEY,
     linha_id INT NOT NULL,
     nome VARCHAR(255) NOT NULL,
-    caminho TEXT NOT NULL,
-    CONSTRAINT FK_linha_viagem FOREIGN KEY (linha_id) REFERENCES linhas(id) ON DELETE CASCADE
+    caminho TEXT NOT NULL
 );
 
--- Tabela de Paradas
+-- Tabela de Paradas (sem referência para viagens)
 CREATE TABLE paradas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     viagem_id INT NOT NULL,
     sequencia INT NOT NULL,
-    parada_id INT NOT NULL,
-    latitude DECIMAL(9,6) NOT NULL,
-    longitude DECIMAL(9,6) NOT NULL,
+    parada_id BIGINT NOT NULL,
+    latitude DECIMAL(10, 7) NOT NULL,
+    longitude DECIMAL(10, 7) NOT NULL,
     nome_parada VARCHAR(255) NOT NULL,
-    CONSTRAINT FK_viagem_parada FOREIGN KEY (viagem_id) REFERENCES viagens(id) ON DELETE CASCADE
+    PRIMARY KEY (viagem_id, sequencia)
 );

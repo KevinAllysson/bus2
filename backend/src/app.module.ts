@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinhasModule } from './linhas/linhas.module';
-import { Viagem } from './viagens/viagens.entity';
-import { Linha } from './linhas/linhas.entity';
 import { ParadasModule } from './paradas/paradas.module';
+import { ViagemModule } from './viagens/viagem.module';
 
 @Module({
   imports: [
@@ -16,10 +15,11 @@ import { ParadasModule } from './paradas/paradas.module';
       database: 'bus2',
       autoLoadEntities: true,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Use apenas em desenvolvimento!
+      synchronize: false,
     }),
     LinhasModule,
     ParadasModule,
+    ViagemModule,
   ],
 })
 export class AppModule {}

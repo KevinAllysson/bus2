@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3000'; // URL base da API
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 
@@ -14,7 +14,6 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/linhas`);
   }
 
-  // Novo método para buscar viagens por linha
   getViagensByLinha(linhaId: number): Observable<any[]> { 
     return this.http.get<any[]>(`${this.baseUrl}/linhas/${linhaId}/viagens`);
   }

@@ -1,59 +1,48 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Viagem } from './viagens.entity';
-import { CreateViagemDto } from './dto/create-viagem.dto';
 
 @Injectable()
-export class ViagemService {
+export class ViagensService {
   constructor(
     @InjectRepository(Viagem)
     private readonly viagemRepository: Repository<Viagem>,
-  ) {}
+  ) { }
 
-
-  async findByLinhaId(linhaId: number): Promise<Viagem[]> {
-    return this.viagemRepository.find({
-      where: { linha_id: linhaId }, // Certifique-se de que o campo 'linha_id' existe
-    });
-  }
-  
   // Criar uma nova viagem
-  async create(createViagemDto: CreateViagemDto): Promise<Viagem> {
-    const novaViagem = this.viagemRepository.create(createViagemDto);
-    return this.viagemRepository.save(novaViagem);
-  }
-
-  // Listar todas as viagens
-  async findAll(): Promise<Viagem[]> {
-    return this.viagemRepository.find();
-  }
-
-  // Buscar uma viagem pelo ID
-  async findOne(id: number): Promise<Viagem> {
-    const viagem = await this.viagemRepository.findOneBy({ id });
-    if (!viagem) {
-      throw new NotFoundException('Viagem não encontrada');
-    }
-    return viagem;
-  }
-
-  // Atualizar uma viagem existente
-  async update(id: number, updateViagemDto: CreateViagemDto): Promise<Viagem> {
-    const viagem = await this.viagemRepository.findOneBy({ id });
-    if (!viagem) {
-      throw new NotFoundException('Viagem não encontrada');
-    }
-    Object.assign(viagem, updateViagemDto); // Atualiza os campos fornecidos
+  async create(viagemData: Partial<Viagem>): Promise<Viagem> {
+    const viagem = this.viagemRepository.create(viagemData);
     return this.viagemRepository.save(viagem);
+  }
+
+  async findAll(): Promise<Viagem[]> {
+    try {
+      return await this.viagemRepository.find();
+    } catch (error) {
+      console.error('Erro ao buscar viagens:', error); 
+      throw error; 
+    }
+  }
+
+  // Obter uma viagem por ID
+  async findOne(linha_id: number): Promise<Viagem> {
+    return this.viagemRepository.findOne({ where: { linha_id } });
+  }
+
+  // Atualizar uma viagem
+  async update(id: number, updateData: Partial<Viagem>): Promise<Viagem> {
+    await this.viagemRepository.update(id, updateData);
+    return this.findOne(id);
   }
 
   // Remover uma viagem
   async remove(id: number): Promise<void> {
-    const viagem = await this.viagemRepository.findOneBy({ id });
-    if (!viagem) {
-      throw new NotFoundException('Viagem não encontrada');
-    }
     await this.viagemRepository.delete(id);
   }
+
+  async findByLinhaId(linhaId: number): Promise<Viagem[]> {
+    return this.viagemRepository.find({ where: { linha_id: linhaId } });
+  }
+  
 }

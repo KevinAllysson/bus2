@@ -1,21 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Viagem } from '../viagens/viagens.entity';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity('linhas')
 export class Linha {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: number; 
 
-  @Column()
+  @Column({ length: 10 })
   codigo: string;
 
-  @Column()
+  @Column({ length: 255 })
   nome: string;
 
-  @Column()
+  @Column({ length: 7 })
   cor: string;
-
-  // Relacionamento com Viagens
-  @OneToMany(() => Viagem, (viagem) => viagem.linha, { cascade: true })
-  viagens: Viagem[];
 }

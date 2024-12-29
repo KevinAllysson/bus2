@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, OnChanges, SimpleChanges, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { CommonModule } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Importar FontAwesomeModule
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; 
 import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ParadasService } from '../../services/paradas.service';
 
@@ -20,20 +20,19 @@ import { ParadasService } from '../../services/paradas.service';
 export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
     constructor(private paradasService: ParadasService) { }
 
-    @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap; // Referência ao GoogleMap do Angular
+    @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap;
     @Input() viagem!: any;
     @Input() showForm: boolean = true;
     @Input() paradas: { lat: number; lng: number; nome: string }[] = [];
     @Output() paradasCarregadas = new EventEmitter<any[]>();
     @Input() selectedViagem!: number | string;
 
-    // Ícones FontAwesome
     faAngleRight = faAngleRight;
     faAngleLeft = faAngleLeft;
 
     center: google.maps.LatLngLiteral = { lat: -26.91012, lng: -49.08234 };
     zoom = 14;
-    mapWidth = '75vw'; // Largura inicial do mapa
+    mapWidth = '75vw'; 
     options: google.maps.MapOptions = {
         zoomControl: true,
         scrollwheel: true,
@@ -50,35 +49,47 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
             this.googleMap.googleMap.setZoom(this.zoom);
             if (this.polyline) {
                 this.polyline.setMap(null);
-                this.polyline = null; // Reseta a referência para evitar reutilização
+                this.polyline = null; 
             }
         }
     }
 
-    ngOnInit(): void {
-        // this.paradasService.getParadas().subscribe((paradas) => {
-        //     this.addMarkers(paradas);
-        // });
-    }
+    ngOnInit(): void { }
 
     toggleForm(): void {
         this.showForm = !this.showForm;
     }
 
     ngAfterViewInit(): void {
-        if (!this.googleMap.googleMap) {
-            console.error('Componente GoogleMap não está inicializado ainda.');
+        if (!this.googleMap || !this.googleMap.googleMap) {
+            console.warn('Google Map não está inicializado. Aguardando...');
+            setTimeout(() => this.ngAfterViewInit(), 500); 
+            return;
         }
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        // Atualiza dimensões do mapa ao alterar showForm
         if (changes['showForm']) {
             this.updateMapDimensions();
         }
 
-        // Renderiza rota e paradas da viagem selecionada
+        if (changes['paradas'] && changes['paradas'].currentValue) {
+            if (!this.googleMap || !this.googleMap.googleMap) {
+                console.warn('Google Map não inicializado. Tentando novamente após atraso.');
+                setTimeout(() => this.ngOnChanges(changes), 500); 
+                return;
+            }
+
+            this.addMarkers(changes['paradas'].currentValue);
+        }
+
         if (changes['viagem'] && this.viagem) {
+            if (!this.googleMap || !this.googleMap.googleMap) {
+                console.warn('Google Map não inicializado. Tentando novamente após atraso.');
+                setTimeout(() => this.ngOnChanges(changes), 500);
+                return;
+            }
+
             if (Array.isArray(this.viagem.caminho)) {
                 this.renderRouteFromArray(this.viagem.caminho, this.viagem.paradas || []);
             } else if (typeof this.viagem.caminho === 'string') {
@@ -87,13 +98,8 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
                 console.error('Caminho da viagem está em formato inválido.', this.viagem.caminho);
             }
         }
-
-        // Adiciona marcadores das paradas
-        if (changes['paradas'] && changes['paradas'].currentValue) {
-            const paradas = changes['paradas'].currentValue;
-            this.addMarkers(paradas);
-        }
     }
+
 
     private updateMapDimensions(): void {
         this.mapWidth = this.showForm ? '75vw' : '95vw';
@@ -175,59 +181,63 @@ export class MapaComponent implements OnInit, OnChanges, AfterViewInit {
         this.addMarkers(paradas);
     }
 
-    loadParadas(viagemId?: number): void {
-        console.log('here')
+    onViagemChange(viagemId: number): void {
         if (!viagemId) {
-            this.paradasService.getAllParadas().subscribe((paradas) => {
-                this.addMarkers(paradas);
-            });
+            console.error('ID da viagem é inválido.');
             return;
         }
-        this.paradasService.getParadasByViagemId(viagemId).subscribe((paradas) => {
-            this.addMarkers(paradas);
-        });
-    }
-    
-    onViagemChange(viagemId: number): void {
-        this.paradasService.getParadasByViagemId(viagemId).subscribe((paradas) => {
-            this.addMarkers(paradas);
+
+        this.paradasService.getParadasByViagemId(viagemId).subscribe({
+            next: (paradas) => {
+                this.addMarkers(paradas);
+            },
+            error: (error) => {
+                console.error('Erro ao carregar paradas:', error);
+            },
         });
     }
 
-    private addMarkers(paradas: { nome: string; lat: number | string; lng: number | string }[]): void {
-        
-        console.log('here')
-        this.markers.forEach((marker) => marker.setMap(null));
-        this.markers = [];
-    
-        const googleMapInstance = this.googleMap?.googleMap;
-        if (!googleMapInstance) {
-            console.error('O Google Map não está inicializado. Não é possível adicionar marcadores.');
+    onParadasCarregadas(paradas: any[]): void {
+        const paradasFormatadas = paradas
+            .filter((parada) => !isNaN(parseFloat(parada.latitude)) && !isNaN(parseFloat(parada.longitude)))
+            .map((parada) => ({
+                nome: parada.nome_parada,
+                lat: parseFloat(parada.latitude),
+                lng: parseFloat(parada.longitude),
+            }));
+
+        this.addMarkers(paradasFormatadas);
+    }
+
+    private addMarkers(paradas: { nome: string; lat: number; lng: number }[]): void {
+        if (!this.googleMap || !this.googleMap.googleMap) {
             return;
         }
-    
+
+        this.markers.forEach((marker) => marker.setMap(null));
+        this.markers = [];
+
+        const googleMapInstance = this.googleMap.googleMap;
+
         paradas.forEach((parada) => {
-            const lat = typeof parada.lat === 'string' ? parseFloat(parada.lat) : parada.lat;
-            const lng = typeof parada.lng === 'string' ? parseFloat(parada.lng) : parada.lng;
-    
-            // Valida se lat e lng são números válidos
-            if (isNaN(lat) || isNaN(lng)) {
-                console.warn(`Parada inválida ignorada:`, parada);
-                return; 
+
+            if (isNaN(parada.lat) || isNaN(parada.lng)) {
+                console.warn('Parada com coordenadas inválidas ignorada:', parada);
+                return;
             }
-    
+
             const marker = new google.maps.Marker({
-                position: { lat, lng },
+                position: { lat: parada.lat, lng: parada.lng },
                 title: parada.nome,
                 icon: {
-                    url: '../../img/bus-stop.png', // Caminho para o ícone do marcador
-                    scaledSize: new google.maps.Size(32, 32), // Define o tamanho do ícone
+                    url: '../../img/bus-stop.png', 
+                    scaledSize: new google.maps.Size(32, 32),
                 },
             });
-    
-            marker.setMap(googleMapInstance); // Adiciona o marcador ao mapa
-            this.markers.push(marker); // Armazena o marcador para futura limpeza
+
+            marker.setMap(googleMapInstance);
+            this.markers.push(marker);
         });
     }
-    
+
 }

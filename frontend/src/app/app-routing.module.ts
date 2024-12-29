@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { routes } from './app.routes'; // Importa as rotas do app.routes.ts
+import { routes } from './app.routes'; 
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

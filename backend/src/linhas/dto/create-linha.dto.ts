@@ -1,22 +1,15 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, Length } from 'class-validator';
 
 export class CreateLinhaDto {
-  @ApiProperty({ description: 'ID da linha', example: 261 })
-  @IsNotEmpty()
-  id: number;
-
-  @ApiProperty({ description: 'Código da linha', example: '10' })
-  @IsNotEmpty()
+  @IsString()
+  @Length(1, 10)
   codigo: string;
 
-  @ApiProperty({ description: 'Nome da linha', example: 'Troncal - Via Rua São Paulo' })
-  @IsNotEmpty()
   @IsString()
+  @Length(1, 255)
   nome: string;
 
-  @ApiProperty({ description: 'Cor representativa da linha', example: '#dfb500' })
-  @IsNotEmpty()
   @IsString()
+  @Length(7, 7)
   cor: string;
 }
