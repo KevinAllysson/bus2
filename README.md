@@ -22,8 +22,6 @@ project-root/
 ├── backend/                  # Código do backend
 ├── frontend/                 # Código do frontend
 ├── README.md                 # Documentação principal do projeto
-├── package.json              # Dependências do projeto raiz
-└── scripts/                  # Scripts auxiliares (se aplicável)
 ```
 
 ## Configuração do Projeto
